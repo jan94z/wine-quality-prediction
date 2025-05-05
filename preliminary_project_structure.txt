@@ -6,7 +6,7 @@ wine-quality-prediction/
 │   ├── schemas.py           # Pydantic models
 │
 ├── data/
-│   ├── schema.sql           # SQL schema (create tables)
+│   ├── scheme.sql           # SQL schema (create tables)
 │   ├── seed_data.sql        # Example/seed SQL data
 │   ├── wine_samples.db      # (Optional) SQLite db with sample data
 │
