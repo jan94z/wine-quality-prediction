@@ -11,3 +11,18 @@ The project is in progress and aims to cover basic ML deployment workflows inclu
 ## Project in progress
 For the project management refer to:
 https://github.com/users/jan94z/projects/3
+
+## Information DUMP as long as project is in progress
+```bash
+sudo apt-get update
+sudo apt-get -y upgrade
+sudo apt-get install -y python3-pip
+sudo apt-get install build-essential libssl-dev libffi-dev python-dev
+sudo apt-get install -y python3-venv
+```
+
+```bash
+python3 -m venv ".venv"
+source .venv/bin/activate
+pip install --upgrade pip
+```
