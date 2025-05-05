@@ -26,3 +26,9 @@ python3 -m venv ".venv"
 source .venv/bin/activate
 pip install --upgrade pip
 ```
+
+P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis. 
+Modeling wine preferences by data mining from physicochemical properties.
+In Decision Support Systems, Elsevier, 47(4):547-553. ISSN: 0167-9236.\
+Available at: http://dx.doi.org/10.1016/j.dss.2009.05.016 \
+Data available at: https://archive.ics.uci.edu/dataset/186/wine+quality
