@@ -27,6 +27,35 @@ source .venv/bin/activate
 pip install --upgrade pip
 ```
 
+```bash
+sudo ./docker docker compose up -d
+sudo docker cp winequality-red.csv wine-quality-db:/csv_data/winequality-red.csv
+sudo docker cp winequality-white.csv wine-quality-db:/csv_data/winequality-white.csv
+```
+create SQL
+
+```SQL
+CREATE TABLE wine_samples (
+    id SERIAL PRIMARY KEY,
+    fixed_acidity REAL,
+    volatile_acidity REAL,
+    citric_acid REAL,
+    residual_sugar REAL,
+    chlorides REAL,
+    free_sulfur_dioxide REAL,
+    total_sulfur_dioxide REAL,
+    density REAL,
+    ph REAL,
+    sulphates REAL,
+    alcohol REAL,
+    quality INTEGER,
+    wine_type TEXT
+);
+```
+
+```python
+python ./data/data_preparation.py --p csv_directory --e True
+```
 P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis. 
 Modeling wine preferences by data mining from physicochemical properties.
 In Decision Support Systems, Elsevier, 47(4):547-553. ISSN: 0167-9236.\
