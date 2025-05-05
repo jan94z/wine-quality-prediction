@@ -5,7 +5,8 @@ The project includes:
 * A machine learning model trained on the Wine Quality dataset
 * A FastAPI backend to provide prediction and data access endpoints
 * Docker support to containerize and run the service easily
-* Deployment configuration for running the service on Azure App Service
+* Deployment configuration for running the service on Azure App Service\
+  
 The project is in progress and aims to cover basic ML deployment workflows including model serving, SQL integration, API design and container-based deployment.
 
 ## Project in progress
