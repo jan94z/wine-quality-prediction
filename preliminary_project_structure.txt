@@ -1,0 +1,24 @@
+wine-quality-prediction/
+├── app/
+│   ├── main.py              # FastAPI app
+│   ├── model.py             # ML model loading and prediction
+│   ├── database.py          # DB connection logic
+│   ├── schemas.py           # Pydantic models
+│
+├── data/
+│   ├── schema.sql           # SQL schema (create tables)
+│   ├── seed_data.sql        # Example/seed SQL data
+│   ├── wine_samples.db      # (Optional) SQLite db with sample data
+│
+├── docker/
+│   ├── Dockerfile           # Dockerfile to build FastAPI app
+│   └── docker-compose.yml   # (Optional) Compose file if needed later
+│
+├── tests/
+│   ├── test_api.py          # API integration tests
+│   ├── test_model.py        # Unit tests for ML model
+│
+├── .gitignore
+├── README.md
+├── requirements.txt
+└── .env.example             # Example for environment variables (DB path, API keys)
