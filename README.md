@@ -1,5 +1,5 @@
 # wine-quality-prediction
-This project provides a simple machine learning API to predict wine quality based on physicochemical properties. It uses a trained classification model to predict the wine's quality score and exposes the prediction functionality through a FastAPI web service.
+This project provides a simple machine learning API to predict wine quality based on physicochemical properties. It uses a trained classification model to predict the wine's quality score and exposes the prediction functionality through a FastAPI web service.\
 The project includes:
 * A SQL database to store wine samples and features
 * A machine learning model trained on the Wine Quality dataset
