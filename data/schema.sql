@@ -1,4 +1,4 @@
-CREATE TABLE wine_samples (
+/*CREATE TABLE wine_samples (
     id SERIAL PRIMARY KEY,
     fixed_acidity REAL,
     volatile_acidity REAL,
@@ -14,4 +14,16 @@ CREATE TABLE wine_samples (
     quality INTEGER,
     wine_type TEXT
 );
+*/
 
+CREATE TABLE train_samples AS
+SELECT * FROM wine_samples
+WHERE random() < 0.7;
+
+CREATE TABLE val_samples AS
+SELECT * FROM wine_samples
+WHERE random() >= 0.7 AND random() < 0.85;
+
+CREATE TABLE test_samples AS
+SELECT * FROM wine_samples
+WHERE random() >= 0.85;
