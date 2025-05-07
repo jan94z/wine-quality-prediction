@@ -3,22 +3,7 @@ from sqlalchemy import create_engine
 from pathlib import Path
 import click
 import yaml
-
-def parse_docker_compose(docker_compose: yaml) -> str:
-    """
-    Function to create a SQLAlchemy engine.
-    Args:
-        docker_compose (yaml): The docker-compose configuration.
-    Returns:
-        str: The database URL.
-    """
-    user = docker_compose["services"]["postgres"]["environment"]["POSTGRES_USER"]
-    password = docker_compose["services"]["postgres"]["environment"]["POSTGRES_PASSWORD"]
-    host = "localhost"
-    port = docker_compose["services"]["postgres"]["ports"][0].split(':')[0]
-    database = docker_compose["services"]["postgres"]["environment"]["POSTGRES_DB"]
-    
-    return f"postgresql://{user}:{password}@{host}:{port}/{database}"
+import utils.utils as utils
 
 def data_exploration(df:pd.DataFrame, title:str) -> None:
     """
@@ -65,19 +50,15 @@ def main(path: str, explore: bool) -> None:
         data_exploration(combined_df, "Combined Dataset")
 
     # Load docker-compose config
-    try:
-        script_dir = Path(__file__).resolve().parent
-        docker_compose_path = script_dir.parent / "docker" / "docker-compose.yml"
-        with open(docker_compose_path, 'r') as file:
-            docker_compose = yaml.safe_load(file)
-    except FileNotFoundError:
-        print("docker-compose.yml not found. Please check the path.")
-        return
+    script_dir = Path(__file__).resolve().parent
+    docker_compose_path = script_dir.parent / "docker" / "docker-compose.yml"
+    with open(docker_compose_path, 'r') as file:
+        docker_compose = yaml.safe_load(file)
 
     # Insert combined data into DB
     combined_df.columns = [col.strip().replace(" ", "_").lower() for col in combined_df.columns]
 
-    DATABASE_URL = parse_docker_compose(docker_compose)
+    DATABASE_URL = utils.parse_docker_compose(docker_compose)
     engine = create_engine(DATABASE_URL)
     combined_df.to_sql('wine_samples', engine, if_exists="append", index=False)
     print(f"Finished import")
