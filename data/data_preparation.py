@@ -3,6 +3,7 @@ from sqlalchemy import create_engine
 from pathlib import Path
 import click
 import yaml
+import utils.utils as utils
 
 def data_exploration(df:pd.DataFrame, title:str) -> None:
     """
@@ -22,22 +23,9 @@ def data_exploration(df:pd.DataFrame, title:str) -> None:
     print("Missing Values:\n", df.isnull().sum())
     print("-----------------------------------")
 
-def insert_data_into_db(docker_compose: yaml, wine_quality_df: pd.DataFrame, table_name:str) -> None:     
-    user = docker_compose["services"]["postgres"]["environment"]["POSTGRES_USER"]
-    password = docker_compose["services"]["postgres"]["environment"]["POSTGRES_PASSWORD"]
-    host = "localhost"
-    port = docker_compose["services"]["postgres"]["ports"][0].split(':')[0]
-    database = docker_compose["services"]["postgres"]["environment"]["POSTGRES_DB"]
-    
-    DATABASE_URL = f"postgresql://{user}:{password}@{host}:{port}/{database}"
-    engine = create_engine(DATABASE_URL)
-
-    wine_quality_df.to_sql(table_name, engine, if_exists="append", index=False)
-    print(f"Finished import into table '{table_name}'.")
-
 @click.command()
-@click.option('--path', '--p', help='Path to the data directory')
-@click.option('--explore', '--e', is_flag=True, help='Explore the data')
+@click.option('--path', '-p', help='Path to the data directory')
+@click.option('--explore', '-e', is_flag=True, help='Explore the data')
 def main(path: str, explore: bool) -> None:
     # Prepare paths
     input_path = Path(path)
@@ -62,18 +50,18 @@ def main(path: str, explore: bool) -> None:
         data_exploration(combined_df, "Combined Dataset")
 
     # Load docker-compose config
-    try:
-        script_dir = Path(__file__).resolve().parent
-        docker_compose_path = script_dir.parent / "docker" / "docker-compose.yml"
-        with open(docker_compose_path, 'r') as file:
-            docker_compose = yaml.safe_load(file)
-    except FileNotFoundError:
-        print("docker-compose.yml not found. Please check the path.")
-        return
+    script_dir = Path(__file__).resolve().parent
+    docker_compose_path = script_dir.parent / "docker" / "docker-compose.yml"
+    with open(docker_compose_path, 'r') as file:
+        docker_compose = yaml.safe_load(file)
 
     # Insert combined data into DB
     combined_df.columns = [col.strip().replace(" ", "_").lower() for col in combined_df.columns]
-    insert_data_into_db(docker_compose, combined_df, 'wine_samples')
+
+    DATABASE_URL = utils.parse_docker_compose(docker_compose)
+    engine = create_engine(DATABASE_URL)
+    combined_df.to_sql('wine_samples', engine, if_exists="append", index=False)
+    print(f"Finished import")
 
 if __name__ == "__main__":
     main()
