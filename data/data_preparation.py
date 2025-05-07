@@ -24,8 +24,8 @@ def data_exploration(df:pd.DataFrame, title:str) -> None:
     print("-----------------------------------")
 
 @click.command()
-@click.option('--path', '--p', help='Path to the data directory')
-@click.option('--explore', '--e', is_flag=True, help='Explore the data')
+@click.option('--path', '-p', help='Path to the data directory')
+@click.option('--explore', '-e', is_flag=True, help='Explore the data')
 def main(path: str, explore: bool) -> None:
     # Prepare paths
     input_path = Path(path)

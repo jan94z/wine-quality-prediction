@@ -57,6 +57,11 @@ CREATE TABLE wine_samples (
 ```python
 python ./data/data_preparation.py --p csv_directory --e True
 ```
+
+```python
+python -m training.train_model -n model1
+```
+
 P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis. 
 Modeling wine preferences by data mining from physicochemical properties.
 In Decision Support Systems, Elsevier, 47(4):547-553. ISSN: 0167-9236.\
