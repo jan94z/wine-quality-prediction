@@ -1,17 +1,36 @@
 services:
-  postgres:
+  db:
     image: postgres
     container_name: wine-quality-db
-    ports:
-      - "5433:5432"
+    restart: always
     environment:
       POSTGRES_USER: wine123
       POSTGRES_PASSWORD: wine123
       POSTGRES_DB: wine-quality-db
+    ports:
+      - "5433:5432"
     volumes:
-      - wine_pgdata:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
       - csv_data:/csv_data
 
+  api:
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+    container_name: wine-quality-api
+    restart: always
+    ports:
+      - "8000:80"
+    environment:
+      - POSTGRES_USER=wine123
+      - POSTGRES_PASSWORD=wine123
+      - POSTGRES_DB=wine-quality-db
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+    depends_on:
+      - db
+
 volumes:
-  wine_pgdata:
+  pg_data:
   csv_data:
+

@@ -16,7 +16,7 @@ CREATE TABLE wine_samples (
     wine_type TEXT
 );
 
--- THEN RUN data_preparation.py
+-- THEN RUN data/data_preparation.py
 
 -- THEN MAKE THE DATASPLIT
 SELECT setseed(0);
@@ -41,6 +41,20 @@ WHERE split_random > 0.8 AND split_random <= 0.9;
 UPDATE wine_samples_split
 SET split_group = 'test'
 WHERE split_random > 0.9;
+
+-- MAKE MODEL REGISTRY TABLE
+CREATE TABLE model_registry (
+    id SERIAL PRIMARY KEY,
+    model_name TEXT,
+    version TEXT,
+  	type TEXT,
+    path TEXT,
+  	accuracy_train REAL,
+    accuracy_val REAL,
+    accuracy_test REAL
+);
+
+-- THEN RUN training/train_model.py
 
 
 

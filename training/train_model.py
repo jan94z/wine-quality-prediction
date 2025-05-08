@@ -108,7 +108,7 @@ def main(verbose: bool, name: str) -> None:
     
     # save model
     if name:
-        complete_path = f"training/models/{name}"
+        complete_path = f"training/models"
         complete_path = Path(complete_path)
         os.makedirs(complete_path, exist_ok=True)
         model_path = complete_path / f"{name}.pkl"
@@ -127,7 +127,7 @@ def main(verbose: bool, name: str) -> None:
                 "model_name": name,
                 "version": datetime.now().strftime("%Y%m%d_%H%M%S"),
                 "type": model.__class__.__name__,
-                "path": str(model_path),
+                "path": f"model/{name}.pkl",
                 "accuracy_train": accuracy_train,
                 "accuracy_val": accuracy_val,
                 "accuracy_test": accuracy_test
