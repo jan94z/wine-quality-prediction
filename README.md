@@ -56,10 +56,41 @@ CREATE TABLE wine_samples (
 
 ```python
 python ./data/data_preparation.py --p csv_directory --e True
+python -m dev.data_preparation -p ./ -e
+
 ```
 
 ```python
 python -m training.train_model -n model1
+```
+
+```bash
+uvicorn app.main:app --reload
+```
+
+```json
+{
+  "sample": {
+    "fixed_acidity": 7,
+    "volatile_acidity": 0.18,
+    "citric_acid": 0.37,
+    "residual_sugar": 1.5,
+    "chlorides": 0.043,
+    "free_sulfur_dioxide": 16,
+    "total_sulfur_dioxide": 104,
+    "density": 0.99216,
+    "ph": 3.18,
+    "sulphates": 0.5,
+    "alcohol": 10.8
+  },
+  "model_input": {
+    "model_path": "./training/models/model1.pkl"
+  }
+}
+```
+
+```bash
+sudo docker compose up --build
 ```
 
 P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis. 

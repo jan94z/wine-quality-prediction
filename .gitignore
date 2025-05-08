@@ -1,6 +1,4 @@
 *.vscode
-winequality-red.csv
-winequality-white.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
