@@ -2,7 +2,7 @@ import pickle
 from pathlib import Path
 
 class Model:
-    def __init__(self, model_path:str):
+    def __init__(self, model_path:str="model/rf.pkl"):
         self.model = None
         self.model_path = Path(model_path)
 

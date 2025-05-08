@@ -15,14 +15,23 @@ def get_engine():
 
 def get_random_samples(limit=10):
     engine = get_engine()
-    query = f"SELECT * FROM wine_samples w JOIN wine_samples_split s ON w.id = s.id WHERE s.split_group = 'test' ORDER BY random() LIMIT {limit}"
+    query = f"""
+    SELECT *
+    FROM wine_samples w 
+    JOIN wine_samples_split s ON w.id = s.id 
+        WHERE s.split_group = 'test' 
+    ORDER BY random() 
+    LIMIT {limit};
+    """
     df = pd.read_sql(query, engine)
+    df = df.drop(columns=["split_random", "split_group"])
     return df.to_dict(orient="records")
 
 def get_model_registry():
     engine = get_engine()
     query = "SELECT * FROM model_registry"
     df = pd.read_sql(query, engine)
+
     return df.to_dict(orient="records")
 
 if __name__ == "__main__":

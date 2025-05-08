@@ -12,7 +12,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the app and models
 COPY ./app /app/app
-COPY ./training/models /app/models
+COPY ./models /app/models
 
 # Optionally copy .env file if needed
 # COPY .env /app/.env

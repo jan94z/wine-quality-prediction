@@ -56,6 +56,8 @@ CREATE TABLE wine_samples (
 
 ```python
 python ./data/data_preparation.py --p csv_directory --e True
+python -m dev.data_preparation -p ./ -e
+
 ```
 
 ```python
