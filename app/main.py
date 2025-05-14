@@ -9,6 +9,10 @@ app = FastAPI()
 def health():
     return {"status": "ok"}
 
+@app.get("/token")
+def token():
+    pass
+
 @app.get("/samples")
 def samples():
     return get_random_samples()

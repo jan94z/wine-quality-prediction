@@ -130,14 +130,28 @@ def main() -> None:
                 accuracy_train REAL,
                 accuracy_val REAL,
                 accuracy_test REAL
-            )
+            );
         """))
         conn.execute(text("""
             INSERT INTO model_registry (model_name, version, type, path, accuracy_train, accuracy_val, accuracy_test)
-            VALUES ('rf', '20250508_155226', 'RandomForestClassifier', 'models/rf.pkl', 1, 0.70032054, 0.67701864)
+            VALUES ('rf', '20250508_155226', 'RandomForestClassifier', 'models/rf.pkl', 1, 0.70032054, 0.67701864);
         """))
-        print("Inserted example model into model_registry.")
+        print("Created model registry and example model.")
 
+    with engine.connect() as conn:
+        conn.execute(text("""
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                email TEXT UNIQUE,
+                password TEXT
+            );
+        """))
+        conn.execute(text("""
+            INSERT INTO users (email, password)
+            VALUES ('test_user', 'test_password')
+            ON CONFLICT (email) DO NOTHING;
+        """))
+        print("Created users table and test user.")
 if __name__ == "__main__":
     main()
 

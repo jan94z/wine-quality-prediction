@@ -1,13 +1,15 @@
 from sqlalchemy import create_engine
 import pandas as pd
 import os
+from dotenv import load_dotenv
 
 def get_engine():
-    db_user = os.getenv("POSTGRES_USER", "wine123")
-    db_pass = os.getenv("POSTGRES_PASSWORD", "wine123")
-    db_host = os.getenv("POSTGRES_HOST", "localhost")
-    db_port = os.getenv("POSTGRES_PORT", "5433")
-    db_name = os.getenv("POSTGRES_DB", "wine-quality-db")
+    load_dotenv()
+    db_user = os.getenv("POSTGRES_USER")
+    db_pass = os.getenv("POSTGRES_PASSWORD")
+    db_host = os.getenv("POSTGRES_HOST")
+    db_port = os.getenv("POSTGRES_PORT")
+    db_name = os.getenv("POSTGRES_DB")
 
     url = f"postgresql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
     print(url)
@@ -34,5 +36,22 @@ def get_model_registry():
 
     return df.to_dict(orient="records")
 
-if __name__ == "__main__":
-    get_random_samples()
+def register_user(email, password):
+    engine = get_engine()
+    # print if email already exists
+    check_query = f"SELECT * FROM users WHERE email = '{email}'"
+    insert_query = f"""
+    INSERT INTO users (email, password) 
+    VALUES ('{email}', '{password}'
+    ON CONFLICT (email)
+    DO NOTHING;
+    """
+    with engine.connect() as conn:
+        result = conn.execute(check_query)
+        if result.fetchone():
+            print(f"User with email {email} already exists.")
+            return
+        else:
+            print(f"User with email {email} does not exist. Inserting new user.")
+            conn.execute(insert_query)
+            print(f"User with email {email} inserted.")

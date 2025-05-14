@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 class WineSample(BaseModel):
     fixed_acidity: float
@@ -15,3 +15,7 @@ class WineSample(BaseModel):
 
 class ModelInput(BaseModel):
     model_path: str
+
+class UserRegister(BaseModel):
+    email: EmailStr
+    password: str
