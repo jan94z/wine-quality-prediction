@@ -152,6 +152,7 @@ def main() -> None:
             ON CONFLICT (email) DO NOTHING;
         """))
         print("Created users table and test user.")
+        
 if __name__ == "__main__":
     main()
 

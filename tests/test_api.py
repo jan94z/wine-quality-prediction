@@ -31,3 +31,7 @@ def test_predict_endpoint():
     response = client.post("/predict", json=payload)
     assert response.status_code == 200
     assert isinstance(response.json()['quality_prediction'], (int, float))
+
+def test_auth_protected_route():
+    response = client.get("/secure")
+    assert response.status_code == 401
