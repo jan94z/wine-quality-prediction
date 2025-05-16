@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres
-    container_name: wine-quality-db
+    container_name: ${POSTGRES_DB}
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -38,7 +38,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_PORT=${POSTGRES_PORT}
-      - SECRET_KEY=${SECRET_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
     depends_on:
       - wine-quality-db-init
 

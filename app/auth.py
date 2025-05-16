@@ -17,7 +17,6 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 # JWT token creation
 def create_access_token(data: dict, expires_delta: timedelta = None):
-    load_dotenv()
     to_encode = data.copy()
     expire = datetime.now(datetime.timezone.utc) + (expires_delta or timedelta(minutes=15))
     to_encode.update({"exp": expire})
@@ -26,7 +25,6 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
 # get current user from token
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 def get_current_user(token: str = Depends(oauth2_scheme)):
-    load_dotenv()
     try:
         payload = jwt.decode(token, os.getenv("JWT_SECRET_KEY"), algorithms=[os.getenv("JWT_ALGORITHM")])
         username: str = payload.get("sub")
@@ -36,16 +34,6 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
     
-
-
-@app.middleware("http")
-async def add_security_headers(request, call_next):
-    response = await call_next(request)
-    response.headers["X-Content-Type-Options"] = "nosniff"
-    response.headers["X-Frame-Options"] = "DENY"
-    response.headers["Strict-Transport-Security"] = "max-age=63072000; includeSubDomains; preload"
-    return response
-
 
 
 

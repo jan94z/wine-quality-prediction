@@ -1,10 +1,11 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 import pandas as pd
 import os
 from dotenv import load_dotenv
+from app.auth import hash_password
+from fastapi import HTTPException
 
 def get_engine():
-    load_dotenv()
     db_user = os.getenv("POSTGRES_USER")
     db_pass = os.getenv("POSTGRES_PASSWORD")
     db_host = os.getenv("POSTGRES_HOST")
@@ -17,41 +18,40 @@ def get_engine():
 
 def get_random_samples(limit=10):
     engine = get_engine()
-    query = f"""
-    SELECT *
-    FROM wine_samples w 
-    JOIN wine_samples_split s ON w.id = s.id 
-        WHERE s.split_group = 'test' 
-    ORDER BY random() 
-    LIMIT {limit};
-    """
-    df = pd.read_sql(query, engine)
+    df = pd.read_sql(text(
+        f"""
+        SELECT *
+        FROM wine_samples w
+        JOIN wine_samples_split s ON w.id = s.id
+        WHERE s.split_group = 'test'
+        ORDER BY random()
+        LIMIT {limit};
+        """
+    ), engine)
     df = df.drop(columns=["split_random", "split_group"])
     return df.to_dict(orient="records")
 
 def get_model_registry():
     engine = get_engine()
-    query = "SELECT * FROM model_registry"
-    df = pd.read_sql(query, engine)
-
+    df = pd.read_sql(text("SELECT * FROM model_registry"), engine)
     return df.to_dict(orient="records")
+
+def get_user(email):
+    engine = get_engine()
+    df = pd.read_sql(text(f"SELECT * FROM users WHERE email = {email}"), engine)
+    return df.to_dict(orient="records")[0] if not df.empty else None
 
 def register_user(email, password):
     engine = get_engine()
-    # print if email already exists
-    check_query = f"SELECT * FROM users WHERE email = '{email}'"
-    insert_query = f"""
-    INSERT INTO users (email, password) 
-    VALUES ('{email}', '{password}'
-    ON CONFLICT (email)
-    DO NOTHING;
-    """
+    hashed_pw = hash_password(password)
     with engine.connect() as conn:
-        result = conn.execute(check_query)
+        result = conn.execute(text(f"SELECT * FROM users WHERE email = {email}"))
         if result.fetchone():
-            print(f"User with email {email} already exists.")
-            return
-        else:
-            print(f"User with email {email} does not exist. Inserting new user.")
-            conn.execute(insert_query)
-            print(f"User with email {email} inserted.")
+            raise HTTPException(status_code=400, detail="User already exists")
+        conn.execute(text(f"""
+            INSERT INTO users (email, password) VALUES ({email}, {hashed_pw})
+        """))
+    print(f"User with email {email} inserted.")
+
+            
+

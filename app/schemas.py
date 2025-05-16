@@ -16,7 +16,7 @@ class WineSample(BaseModel):
 class ModelInput(BaseModel):
     model_path: str
 
-class UserRegister(BaseModel):
+class User(BaseModel):
     email: EmailStr
     password: str
 
