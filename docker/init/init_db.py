@@ -96,8 +96,8 @@ def main() -> None:
     print("wine_samples table ensured.")
 
     # Prepare paths
-    white_path = Path('./winequality-white.csv')
-    red_path = Path('./winequality-red.csv')
+    white_path = Path('init/winequality-white.csv')
+    red_path = Path('init/winequality-red.csv')
 
     # Load datasets
     white = pd.read_csv(white_path, sep=';')
