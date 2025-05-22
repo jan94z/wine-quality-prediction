@@ -5,6 +5,7 @@ from pathlib import Path
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import OperationalError
 from dotenv import load_dotenv
+from passlib.context import CryptContext
 
 def data_exploration(df:pd.DataFrame, title:str) -> None:
     """
@@ -65,35 +66,19 @@ def query(engine, queries:list[str]) -> None:
         queries (list[str]): List of SQL queries to execute.
     """
     for query in queries:
-        with engine.connect() as conn:
+        with engine.begin() as conn:
             conn.execute(text(query))
+
+# register user and hash password
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+def hash_password(password: str) -> str:
+    return pwd_context.hash(password)
 
 def main() -> None:
     load_dotenv()
     engine = get_engine()
 
     wait_for_db(engine)
-
-    # create the wine_samples table if it doesn't exist
-    query(engine, ["""
-            CREATE TABLE IF NOT EXISTS wine_samples (
-                id SERIAL PRIMARY KEY,
-                fixed_acidity REAL,
-                volatile_acidity REAL,
-                citric_acid REAL,
-                residual_sugar REAL,
-                chlorides REAL,
-                free_sulfur_dioxide REAL,
-                total_sulfur_dioxide REAL,
-                density REAL,
-                ph REAL,
-                sulphates REAL,
-                alcohol REAL,
-                quality INTEGER,
-                wine_type TEXT
-            )
-        """])
-    print("wine_samples table ensured.")
 
     # Prepare paths
     white_path = Path('init/winequality-white.csv')
@@ -118,6 +103,28 @@ def main() -> None:
     # Insert combined data into DB
     combined_df.columns = [col.strip().replace(" ", "_").lower() for col in combined_df.columns]
 
+    # create the wine_samples table
+    query(engine, ["""
+            DROP TABLE IF EXISTS wine_samples"""]) # drop table if it exists])
+    query(engine, ["""
+            CREATE TABLE IF NOT EXISTS wine_samples (
+                id SERIAL PRIMARY KEY,
+                fixed_acidity REAL,
+                volatile_acidity REAL,
+                citric_acid REAL,
+                residual_sugar REAL,
+                chlorides REAL,
+                free_sulfur_dioxide REAL,
+                total_sulfur_dioxide REAL,
+                density REAL,
+                ph REAL,
+                sulphates REAL,
+                alcohol REAL,
+                quality INTEGER,
+                wine_type TEXT
+            )
+        """])
+    print("wine_samples table ensured.")
     combined_df.to_sql('wine_samples', engine, if_exists="append", index=False)
     print(f"Finished import")
 
@@ -127,7 +134,9 @@ def main() -> None:
             """DROP TABLE IF EXISTS wine_samples_split""", # drop table if it exists
             """
             CREATE TABLE wine_samples_split AS
-            SELECT id, random() AS split_random
+            SELECT
+                id, 
+                random() AS split_random
             FROM wine_samples;
             """, # create a new table with random values
             """ALTER TABLE wine_samples_split ADD COLUMN split_group TEXT;""", # add a new column for the split group
@@ -182,7 +191,7 @@ def main() -> None:
                 """, # create a new table for users
                 f"""
                 INSERT INTO users (email, password)
-                VALUES ('{os.getenv("TEST_USER")}', '{os.getenv("TEST_USER_PASSWORD")}')
+                VALUES ('{os.getenv("TEST_USER")}', '{hash_password(os.getenv("TEST_USER_PASSWORD"))}')
                 ON CONFLICT (email) DO NOTHING;
                 """ # insert a test user into the table
             ]
