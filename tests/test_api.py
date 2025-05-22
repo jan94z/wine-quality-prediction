@@ -31,3 +31,20 @@ def test_predict_endpoint():
     response = client.post("/predict", json=payload)
     assert response.status_code == 200
     assert isinstance(response.json()['quality_prediction'], (int, float))
+
+def test_auth_protected_route():
+    response = client.get("/secure")
+    assert response.status_code == 401
+
+def test_register_and_login():
+    email = "test@example.com"
+    password = "test1234"
+
+    # Registrierung
+    r = client.post("/register", json={"email": email, "password": password})
+    assert r.status_code in [200, 400]  # User könnte schon existieren
+
+    # Login
+    r = client.post("/token", data={"username": email, "password": password})
+    assert r.status_code == 200
+    assert "access_token" in r.json()

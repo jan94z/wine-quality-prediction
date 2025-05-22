@@ -1,5 +1,5 @@
 # WORK IN PROGRESS
-This is a practice project of mine to cover basic ML deployment workflows including model serving, SQL integration, API design, container-based deployment and unit/integration tests. Besides the coding part, I am also trying to work as agile as possible in an one-person project without real world users/customers 😌 Check out my kanban board [here](https://github.com/users/jan94z/projects/3)
+This is a practice project of mine to cover basic ML deployment workflows including model serving, SQL integration, API design, API security / auth, container-based deployment and unit/integration tests. Besides the coding part, I am also trying to work as agile as possible in an one-person project without real world users/customers 😌 Check out the kanban board [here](https://github.com/users/jan94z/projects/3)
 
 
 # Wine Quality Prediction
@@ -7,7 +7,7 @@ This project provides a simple machine learning API to predict wine quality base
 The project includes:
 * A PostgreSQL database to store wine samples and features
 * A machine learning model trained on the Wine quality dataset
-* A FastAPI backend to provide prediction and data access endpoints
+* A FastAPI backend to provide prediction and secure data access endpoints
 * Docker support to containerize and run the service easily
 * ...\
 

@@ -15,7 +15,7 @@ COPY ./app /app/app
 COPY ./models /app/models
 
 # Optionally copy .env file if needed
-# COPY .env /app/.env
+COPY .env /app/.env
 
 # Expose port (optional)
 EXPOSE 80
