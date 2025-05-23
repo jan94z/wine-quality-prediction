@@ -14,8 +14,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY ./app /app/app
 COPY ./models /app/models
 
-# Optionally copy .env file if needed
-COPY .env /app/.env
+# Copy .env file if needed
+COPY ./docker/.env /app/.env
 
 # Expose port (optional)
 EXPOSE 80

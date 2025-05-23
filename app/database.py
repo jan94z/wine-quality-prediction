@@ -7,7 +7,12 @@ from fastapi import HTTPException
 
 load_dotenv()
 
-def get_engine():
+def get_engine() -> None:
+    """
+    Function to get the database engine.
+    Returns:
+        engine: SQLAlchemy engine object.
+    """
     db_user = os.getenv("POSTGRES_USER")
     db_pass = os.getenv("POSTGRES_PASSWORD")
     db_host = os.getenv("POSTGRES_HOST")
@@ -15,6 +20,7 @@ def get_engine():
     db_name = os.getenv("POSTGRES_DB")
 
     url = f"postgresql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
+    print(url)
     return create_engine(url)
 
 def get_random_samples(limit=10):

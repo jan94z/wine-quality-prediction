@@ -6,6 +6,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.exc import OperationalError
 from dotenv import load_dotenv
 from passlib.context import CryptContext
+import click
 
 def data_exploration(df:pd.DataFrame, title:str) -> None:
     """
@@ -25,7 +26,7 @@ def data_exploration(df:pd.DataFrame, title:str) -> None:
     print("Missing Values:\n", df.isnull().sum())
     print("-----------------------------------")
 
-def get_engine():
+def get_engine() -> None:
     """
     Function to get the database engine.
     Returns:
