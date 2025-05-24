@@ -19,7 +19,7 @@ services:
     container_name: wine-quality-db-init
     depends_on:
       - db
-    command: ["python", "init/init_db.py"]
+    command: ["python", "init_db/init_db.py"]
     volumes:
       - .:/app
     working_dir: /app
