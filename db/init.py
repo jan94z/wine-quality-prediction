@@ -2,11 +2,10 @@ import os
 import time
 import pandas as pd 
 from pathlib import Path
-from sqlalchemy import create_engine, text
+from sqlalchemy import text
 from sqlalchemy.exc import OperationalError
 from dotenv import load_dotenv
-from passlib.context import CryptContext
-import click
+from shared.utils import get_engine, query, hash_password
 
 def data_exploration(df:pd.DataFrame, title:str) -> None:
     """
@@ -26,22 +25,6 @@ def data_exploration(df:pd.DataFrame, title:str) -> None:
     print("Missing Values:\n", df.isnull().sum())
     print("-----------------------------------")
 
-def get_engine() -> None:
-    """
-    Function to get the database engine.
-    Returns:
-        engine: SQLAlchemy engine object.
-    """
-    db_user = os.getenv("POSTGRES_USER")
-    db_pass = os.getenv("POSTGRES_PASSWORD")
-    db_host = os.getenv("POSTGRES_HOST")
-    db_port = os.getenv("POSTGRES_PORT")
-    db_name = os.getenv("POSTGRES_DB")
-
-    url = f"postgresql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
-    print(url)
-    return create_engine(url)
-
 def wait_for_db(engine) -> None:
     """ 
     Function to wait for the database to be ready.
@@ -59,22 +42,6 @@ def wait_for_db(engine) -> None:
             time.sleep(5)
     raise Exception("DB not ready after retries.")
 
-def query(engine, queries:list[str]) -> None:
-    """ 
-    Function to execute a list of SQL queries.
-    Args:
-        engine: SQLAlchemy engine object.
-        queries (list[str]): List of SQL queries to execute.
-    """
-    for query in queries:
-        with engine.begin() as conn:
-            conn.execute(text(query))
-
-# register user and hash password
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
-
 def main() -> None:
     load_dotenv()
     engine = get_engine()
@@ -82,8 +49,8 @@ def main() -> None:
     wait_for_db(engine)
 
     # Prepare paths
-    white_path = Path('init/winequality-white.csv')
-    red_path = Path('init/winequality-red.csv')
+    white_path = Path('./winequality-white.csv')
+    red_path = Path('./winequality-red.csv')
 
     # Load datasets
     white = pd.read_csv(white_path, sep=';')
@@ -131,8 +98,8 @@ def main() -> None:
 
     # Create train/valid/test split
     query(engine, 
-          [
-            """DROP TABLE IF EXISTS wine_samples_split""", # drop table if it exists
+          ["""SELECT setseed(0);""", # set seed for reproducibility
+            """DROP TABLE IF EXISTS wine_samples_split;""", # drop table if it exists
             """
             CREATE TABLE wine_samples_split AS
             SELECT
@@ -153,31 +120,6 @@ def main() -> None:
           )
 
     print("Created train/valid/test split.")
-
-
-    # Create model registry table
-    query(engine,
-            [
-                """DROP TABLE IF EXISTS model_registry""", # drop table if it exists
-                """
-                CREATE TABLE model_registry (
-                    id SERIAL PRIMARY KEY,
-                    model_name TEXT,
-                    version TEXT,
-                    type TEXT,
-                    path TEXT,
-                    accuracy_train REAL,
-                    accuracy_val REAL,
-                    accuracy_test REAL
-                );
-                """, # create a new table for the model registry
-                """
-                INSERT INTO model_registry (model_name, version, type, path, accuracy_train, accuracy_val, accuracy_test)
-                VALUES ('rf', '20250508_155226', 'RandomForestClassifier', 'models/rf.pkl', 1, 0.70032054, 0.67701864);
-                """ # insert an example model into the registry
-            ]
-)
-    print("Created model registry.")
 
     # Create users table and insert test user
     query(engine,
