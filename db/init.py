@@ -72,8 +72,7 @@ def main() -> None:
     combined_df.columns = [col.strip().replace(" ", "_").lower() for col in combined_df.columns]
 
     # create the wine_samples table
-    query(engine, ["""
-            DROP TABLE IF EXISTS wine_samples"""]) # drop table if it exists])
+
     query(engine, ["""
             CREATE TABLE IF NOT EXISTS wine_samples (
                 id SERIAL PRIMARY KEY,
@@ -99,7 +98,6 @@ def main() -> None:
     # Create train/valid/test split
     query(engine, 
           ["""SELECT setseed(0);""", # set seed for reproducibility
-            """DROP TABLE IF EXISTS wine_samples_split;""", # drop table if it exists
             """
             CREATE TABLE wine_samples_split AS
             SELECT
@@ -123,9 +121,7 @@ def main() -> None:
 
     # Create users table and insert test user
     query(engine,
-            [
-                """DROP TABLE IF EXISTS users""", # drop table if it exists
-                """
+            [   """
                 CREATE TABLE users (
                     id SERIAL PRIMARY KEY,
                     email TEXT UNIQUE,

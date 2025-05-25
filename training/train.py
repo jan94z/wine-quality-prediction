@@ -74,7 +74,7 @@ def main(name: str) -> None:
     acc_test = metrics.accuracy_score(y_test, model.predict(X_test))
 
     # MLflow Setup
-    mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "file:/app/mlruns"))
+    mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
     mlflow.set_experiment("wine-quality")
 
     with mlflow.start_run() as run:
@@ -83,7 +83,7 @@ def main(name: str) -> None:
         mlflow.log_metric("accuracy_val", acc_val)
         mlflow.log_metric("accuracy_test", acc_test)
 
-        signature = mlflow.infer_signature(X_train, model.predict(X_train))
+        signature = mlflow.models.infer_signature(X_train, model.predict(X_train))
 
         mlflow.sklearn.log_model(
             sk_model=model,
