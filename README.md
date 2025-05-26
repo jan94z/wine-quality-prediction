@@ -13,10 +13,17 @@ The project includes:
 
 ## Installation guide
 ### User
-Download this repo and execute the following command in the root project folder:
+Download this repo and execute ...
 ```bash
-sudo docker compose -f docker/docker-compose.yml up
+sudo docker compose up --build -d db db-init
+sudo docker compose up --build -d mlflow
+sudo docker compose up --build -d training
+sudo docker compose run --rm training --name yourModel
 ```
+
+
+http://localhost:5000/
+
 Then you can open http://localhost:8000/docs in your browser. 
 
 API calls:

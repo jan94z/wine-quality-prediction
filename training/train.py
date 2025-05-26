@@ -12,6 +12,7 @@ from sklearn.linear_model import LogisticRegression
 import mlflow
 from dotenv import load_dotenv
 from shared.utils import get_engine
+from tqdm import tqdm
 
 @click.command()
 @click.option('--name', '-n', default = None, help='Model name to save the model')
@@ -67,7 +68,7 @@ def main(name: str) -> None:
 
     # Train model
     model = RandomForestClassifier(n_estimators=100, random_state=42)
-    model.fit(X_train, y_train)
+    tqdm(model.fit(X_train, y_train), desc="Training model", total=len(X_train))
 
     acc_train = metrics.accuracy_score(y_train, model.predict(X_train))
     acc_val = metrics.accuracy_score(y_val, model.predict(X_val))
@@ -89,20 +90,11 @@ def main(name: str) -> None:
             sk_model=model,
             artifact_path="model",
             signature=signature,
-            registered_model_name="wine_model"
+            registered_model_name=name if name else "wine-quality-model"
         )
 
         print(f" Registered Model '{name}'.")
 
-        # Save default model locally if not exists
-        local_path = Path("/app/default_model") / f"{name}.pkl"
-        if not local_path.exists():
-            local_path.parent.mkdir(parents=True, exist_ok=True)
-            with open(local_path, "wb") as f:
-                pickle.dump(model, f)
-            print(f"Default model saved {local_path}")
-        else:
-            print(f"Modell '{name}' already exists, not overwriting.")
 
 if __name__ == "__main__":
     main()

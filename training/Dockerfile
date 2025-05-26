@@ -10,6 +10,6 @@ RUN pip install --no-cache-dir --upgrade pip
 RUN pip install --no-cache-dir -r shared/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["python", "train.py", "--name", "default_model"]
+ENTRYPOINT ["python", "train.py"]
 
 
