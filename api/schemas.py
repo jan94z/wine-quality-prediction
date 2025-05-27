@@ -14,12 +14,15 @@ class WineSample(BaseModel):
     alcohol: float
 
 class ModelInput(BaseModel):
-    model_path: str
-
+    model_name: str
+    model_stage: str = "Production"  # Optional: can switch between Staging/Production
 class User(BaseModel):
     email: EmailStr
     password: str
-
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+class PredictionResponse(BaseModel):
+    quality_prediction: int
+

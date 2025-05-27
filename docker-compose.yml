@@ -80,6 +80,8 @@ services:
       - ${API_LOCAL_PORT}:${API_PORT}
     env_file:
       - .env
+    environment:
+      - MLFLOW_URI=http://mlflow:${MLFLOW_PORT}
     depends_on:
       - db
       - db-init

@@ -1,16 +1,25 @@
-import pickle
-from pathlib import Path
+import mlflow
+import os
+import pandas as pd
 
 class Model:
-    def __init__(self, model_path:str="model/rf.pkl"):
+    def __init__(self, model_name: str, model_stage: str = "Production"):
+        self.model_name = model_name
+        self.model_stage = model_stage
         self.model = None
-        self.model_path = Path(model_path)
 
     def load(self):
         if self.model is None:
-            with open(self.model_path, "rb") as f:
-                self.model = pickle.load(f)
+            tracking_uri = os.environ.get("MLFLOW_URI", "http://mlflow:5000")
+            mlflow.set_tracking_uri(tracking_uri)
+            model_uri = f"models:/{self.model_name}/{self.model_stage}"
+            self.model = mlflow.pyfunc.load_model(model_uri)
 
     def predict(self, data):
         self.load()
-        return float(self.model.predict([data])[0])  # Single prediction
+        # Convert the input accordingly
+        if not isinstance(data, pd.DataFrame):
+            data = pd.DataFrame([data])
+        # Prediction output as int
+        result = self.model.predict(data)
+        return int(result[0])

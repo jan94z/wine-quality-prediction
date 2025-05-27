@@ -11,6 +11,9 @@ from sklearn.linear_model import LogisticRegression
 import mlflow
 from shared.utils import get_engine
 from tqdm import tqdm
+import logging
+
+logger = logging.getLogger(__name__)
 
 @click.command()
 @click.option('--name', '-n', default = None, help='Model name to save the model')
@@ -89,8 +92,8 @@ def main(name: str) -> None:
             signature=signature,
             registered_model_name=name if name else "wine-quality-model"
         )
-
-        print(f" Registered Model '{name}'.")
+        
+        logger.info(f"Registered Model '{name}'.")
 
 
 if __name__ == "__main__":
