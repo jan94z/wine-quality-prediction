@@ -4,7 +4,6 @@ import pandas as pd
 from pathlib import Path
 from sqlalchemy import text
 from sqlalchemy.exc import OperationalError
-from dotenv import load_dotenv
 from shared.utils import get_engine, query, hash_password
 
 def data_exploration(df:pd.DataFrame, title:str) -> None:
@@ -43,7 +42,6 @@ def wait_for_db(engine) -> None:
     raise Exception("DB not ready after retries.")
 
 def main() -> None:
-    load_dotenv()
     engine = get_engine()
 
     wait_for_db(engine)
@@ -130,7 +128,7 @@ def main() -> None:
                 """, # create a new table for users
                 f"""
                 INSERT INTO users (email, password)
-                VALUES ('{os.getenv("TEST_USER")}', '{hash_password(os.getenv("TEST_USER_PASSWORD"))}')
+                VALUES ('{os.environ.get("TEST_USER", "test_user")}', '{hash_password(os.environ.get("TEST_USER_PASSWORD", "test_password"))}')
                 ON CONFLICT (email) DO NOTHING;
                 """ # insert a test user into the table
             ]

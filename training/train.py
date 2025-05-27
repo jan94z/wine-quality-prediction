@@ -1,6 +1,5 @@
 import os
 import click
-import pickle
 import pandas as pd
 import sklearn.metrics as metrics
 from pathlib import Path
@@ -10,14 +9,12 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 import mlflow
-from dotenv import load_dotenv
 from shared.utils import get_engine
 from tqdm import tqdm
 
 @click.command()
 @click.option('--name', '-n', default = None, help='Model name to save the model')
 def main(name: str) -> None:
-    load_dotenv()
     # create database engine
     engine = get_engine()
 
@@ -75,7 +72,7 @@ def main(name: str) -> None:
     acc_test = metrics.accuracy_score(y_test, model.predict(X_test))
 
     # MLflow Setup
-    mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
+    mlflow.set_tracking_uri(os.environ.get("MLFLOW_URI", "http://localhost:5000"))
     mlflow.set_experiment("wine-quality")
 
     with mlflow.start_run() as run:

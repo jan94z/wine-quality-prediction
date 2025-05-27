@@ -10,7 +10,6 @@ WORKDIR /app
 
 COPY /api /app/
 COPY /shared /app/shared
-COPY .env /app/.env
 
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
