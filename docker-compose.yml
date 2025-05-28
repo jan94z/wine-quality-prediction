@@ -71,6 +71,14 @@ services:
       - mlflow
     restart: "no"
 
+  promotion:
+    build:
+      context: .
+      dockerfile: ci/promotion/Dockerfile
+    environment:
+      - MLFLOW_URI=http://mlflow:${MLFLOW_PORT}
+    restart: "no"
+    
   api:
     build:
       context: .

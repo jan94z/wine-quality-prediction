@@ -16,7 +16,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 @click.command()
-@click.option('--name', '-n', default = None, help='Model name to save the model')
+@click.option('--name', '-n', default = "wine-quality-model", help='Model name to save the model')
 def main(name: str) -> None:
     # create database engine
     engine = get_engine()

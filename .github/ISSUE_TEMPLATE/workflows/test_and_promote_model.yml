@@ -1,0 +1,22 @@
+name: Model Test & Staging Promotion
+
+on: [workflow_dispatch, push]
+
+jobs:
+  test_and_stage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          pip install -r api/requirements.txt
+          pip install -r shared/requirements.txt
+          pip install mlflow
+      - name: Run model performance tests
+        run: python ci/test_model_performance.py
+      - name: Promote model to staging
+        run: python ci/promote_to_staging.py
