@@ -77,6 +77,8 @@ services:
       dockerfile: ci/promotion/Dockerfile
     environment:
       - MLFLOW_URI=http://mlflow:${MLFLOW_PORT}
+    volumes:
+      - mlruns:/app/mlruns
     restart: "no"
     
   api:
