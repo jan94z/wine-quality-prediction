@@ -11,7 +11,7 @@ def main(alias, version):
 
     if version == "":
         versions = client.search_model_versions(f"name='{model_name}'")
-        latest = max([int(v.version) for v in versions if not v.aliases], default=None)
+        latest = max([int(v.version) for v in versions], default=None)
         version = str(latest) if latest is not None else None
     if not version:
         raise Exception("No model version specified or found without alias.")
@@ -22,3 +22,6 @@ def main(alias, version):
         version=version
     )
     print(f"Model version {version} promoted to 'production'.")
+
+if __name__ == "__main__":
+    main()

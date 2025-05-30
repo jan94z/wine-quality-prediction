@@ -1,3 +1,7 @@
+# This just tests if the db, the mlflow server, the api is working IN THEORY
+# bc everything just runs locally, github actions can't access the existing containers, it just creates its own
+# including model training just works because the model and the data is so small 
+
 name: Test API with PostgreSQL and Docker Compose
 
 on: [push, pull_request]
@@ -5,15 +9,6 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
-          POSTGRES_DB: test_db
-        ports:
-          - 5432:5432
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
@@ -24,12 +19,20 @@ jobs:
         run: |
           pip install -r api/requirements.txt
           pip install -r shared/requirements.txt
+          pip install -r db/requirements.txt
+          pip install -r training/requirements.txt
           pip install pytest
       - name: Start Docker Compose services
-        run: docker compose -f docker-compose.yml up -d
+        run: | 
+          docker compose -f ci/docker-compose.yml up --build -d db db-init # TODO WHAT DOES THE --build FLAG DO?
+          docker compose -f ci/docker-compose.yml up --build -d mlflow
+          docker compose -f ci/docker-compose.yml up --build -d training
+          docker compose -f ci/docker-compose.yml run --rm training
+          docker compose -f ci/docker-compose.yml up --build -d promotion
+          docker compose -f ci/docker-compose.yml up --build -d api
       - name: Wait for API
-        run: sleep 10  # Or use a curl health check loop
+        run: sleep 10  
       - name: Run tests
-        run: pytest tests/
+        run: pytest ci/tests/tests.py
       - name: Shutdown services
         run: docker compose down

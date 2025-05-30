@@ -1,17 +1,32 @@
 # WORK IN PROGRESS
-This is a practice project of mine to cover basic ML deployment workflows including model serving, SQL integration, API design, API security / auth, container-based deployment and unit/integration tests. Besides the coding part, I am also trying to work as agile as possible in an one-person project without real world users/customers 😌 Check out the kanban board [here](https://github.com/users/jan94z/projects/3)
+This is a practice project of mine to cover basic ML deployment workflows including model serving, SQL integration, API design, API security / auth, container-based deployment, MLops basics (Mlflow, CI/CD) and unit/integration tests. Besides the coding part, I am also trying to work as agile as possible in an one-person project without real world users/customers - check out the kanban board [here](https://github.com/users/jan94z/projects/3)
 
 
 # Wine Quality Prediction
-This project provides a simple machine learning API to predict wine quality based on physicochemical properties[^1]. It uses a classification model to predict the wine's quality score and exposes the prediction functionality through a FastAPI web service. 
+This project provides a machine learning API to predict wine quality based on physicochemical properties[^1]. It uses a classification model to predict the wine's quality score and exposes the prediction functionality through a FastAPI web service. 
 The project includes:
-* A PostgreSQL database to store wine samples and features
+* A PostgreSQL database to store wine samples and user login data
 * A machine learning model trained on the Wine quality dataset
+* Mlflow to track experiments and for model versioning
 * A FastAPI backend to provide prediction and secure data access endpoints
 * Docker support to containerize and run the service easily
+* CI/CD workflows to automatically run tests when pull requests are made or something is pushed to main
 * ...\
 
 ## Installation guide
+```bash
+sudo docker compose up --build -d db db-init
+sudo docker compose up --build -d mlflow
+sudo docker compose up --build -d training
+sudo docker compose up --build -d promotion
+sudo docker compose run --rm promotion --alias production
+
+
+sudo docker compose run --rm training --name yourModel
+```
+
+
+
 ### User
 Download this repo and execute ...
 ```bash

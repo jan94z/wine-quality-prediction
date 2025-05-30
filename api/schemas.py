@@ -13,12 +13,10 @@ class WineSample(BaseModel):
     sulphates: float
     alcohol: float
 
-class ModelInput(BaseModel):
-    model_name: str
-    model_stage: str = "Production"  # Optional: can switch between Staging/Production
 class User(BaseModel):
     email: EmailStr
     password: str
+    
 class Token(BaseModel):
     access_token: str
     token_type: str

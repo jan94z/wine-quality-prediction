@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from api.model import Model
 from api.database import get_random_samples, get_user, register_user
-from api.schemas import WineSample, ModelInput, User, Token, PredictionResponse
+from api.schemas import WineSample, User, Token, PredictionResponse
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from api.auth import verify_password, create_access_token, get_current_user
@@ -47,12 +47,11 @@ def samples(request: Request, user: str = Depends(get_current_user)):
 def predict(
     request: Request,
     sample: WineSample,
-    model_input: ModelInput,
     current_user: str = Depends(get_current_user)
 ):
     # Prepare sample data as dict
     sample_data = sample.dict()
-    model = Model(model_name=model_input.model_name, model_stage=model_input.model_stage)
+    model = Model(model_name="wine-quality-model")
     try:
         prediction = model.predict(sample_data)
     except Exception as e:
