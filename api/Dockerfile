@@ -8,7 +8,7 @@ RUN apt-get update && apt-get upgrade -y && \
 # Set workdir
 WORKDIR /app
 
-COPY /api /app/
+COPY /api /app/api
 COPY /shared /app/shared
 
 RUN pip install --upgrade pip
@@ -19,4 +19,4 @@ RUN pip install --no-cache-dir -r shared/requirements.txt
 EXPOSE 8000
 
 # Start FastAPI server
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
