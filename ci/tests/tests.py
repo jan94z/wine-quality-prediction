@@ -51,7 +51,7 @@ def test_register_and_login():
 
     # Registrierung
     r = client.post("/register", json={"email": email, "password": password})
-    assert r.status_code in [200, 400]  # User könnte schon existieren
+    assert r.status_code in [200, 400]  # User could already exist
 
     # Login
     r = client.post("/token", data={"username": email, "password": password})

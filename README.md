@@ -7,7 +7,7 @@ This project provides a machine learning API to predict wine quality based on ph
 The project includes:
 * A PostgreSQL database to store wine samples and user login data
 * A machine learning model trained on the Wine quality dataset
-* Mlflow to track experiments and for model versioning
+* Mlflow to track experiments and for model versionin 
 * A FastAPI backend to provide prediction and secure data access endpoints
 * Docker support to containerize and run the service easily
 * CI/CD workflows to automatically run tests when pull requests are made or something is pushed to main
