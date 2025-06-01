@@ -92,6 +92,10 @@ services:
       - .env
     environment:
       - MLFLOW_URI=http://mlflow:${MLFLOW_PORT}
+    # volumes: # TODO remove after local dev
+      # - ./api:/app/api
+      # - ./shared:/app/shared
+    # command: ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"] # TODO REMOVE
     depends_on:
       - db
       - db-init
@@ -100,4 +104,6 @@ services:
 volumes:
   pg_data:
   mlruns:
+
+  
 

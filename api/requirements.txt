@@ -10,3 +10,6 @@ python_jose==3.4.0
 slowapi==0.1.9
 SQLAlchemy==2.0.41
 starlette==0.46.2
+mlflow
+pydantic[email]
+python-multipart
