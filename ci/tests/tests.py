@@ -55,7 +55,6 @@ def test_predict_endpoint():
     assert response.status_code == 200
     # # TODO CHECK MODEL FUNCTIONALITY, EASIER HERE BECAUSE I LOAD A MODEL ANYWAY
 
-
 def test_register_and_login():
     email = "test@example.com"
     password = "test1234"
