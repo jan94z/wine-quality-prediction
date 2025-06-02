@@ -83,7 +83,7 @@ services:
     
   api:
     build:
-      context: .
+      context: ..
       dockerfile: ./api/Dockerfile
     restart: always
     ports:
