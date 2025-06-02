@@ -33,15 +33,15 @@ jobs:
 
       - name: Start Docker Compose services
         run: | 
-            cd ci
-            docker compose up --build -d db
-            docker compose up --build -d db-init
-            docker compose up --build -d mlflow
-            docker compose up --build -d training
-            docker compose up --build -d promotion
-            docker compose run --rm promotion --alias Production
-            docker compose up --build -d api
-            cd ..
+            docker compose -f docker-compose.ci.yml up --build -d db && \
+            docker compose -f docker-compose.ci.yml build db-init && \
+            docker compose -f docker-compose.ci.yml run --rm db-init && \
+            docker compose -f docker-compose.ci.yml up --build -d mlflow && \
+            docker compose -f docker-compose.ci.yml build training && \
+            docker compose -f docker-compose.ci.yml run --rm training && \
+            docker compose -f docker-compose.ci.yml build promotion && \
+            docker compose -f docker-compose.ci.yml run --rm promotion --alias Production && \
+            docker compose -f docker-compose.ci.yml up --build -d api 
 
       - name: Wait for API to be ready
         run: |
@@ -55,5 +55,5 @@ jobs:
         run: PYTHONPATH=$(pwd) pytest ci/tests/tests.py
 
       - name: Shutdown services
-        run: docker compose -f ci/docker-compose.yml down
+        run: docker compose down
 

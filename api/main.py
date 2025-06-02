@@ -9,7 +9,8 @@ from slowapi.util import get_remote_address
 from api.auth import verify_password, create_access_token, get_current_user
 
 app = FastAPI()
-model = Model(model_name="wine-quality-model")  # Load once on app startup
+model = Model(model_name="wine-quality-model")
+model.load()  # preload the model
 
 # Middleware and rate limiting
 limiter = Limiter(key_func=get_remote_address)
@@ -53,7 +54,6 @@ def predict(
 ):
     print("Received prediction request")
     sample_data = sample.dict()
-    model = Model(model_name="wine-quality-model")
     try:
         prediction = model.predict(sample_data)
         print("Prediction complete:", prediction)

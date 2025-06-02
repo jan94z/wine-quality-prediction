@@ -75,7 +75,7 @@ def main(name: str) -> None:
     acc_test = metrics.accuracy_score(y_test, model.predict(X_test))
 
     # MLflow Setup
-    mlflow.set_tracking_uri(os.environ.get("MLFLOW_URI", "http://localhost:5000"))
+    mlflow.set_tracking_uri(os.environ.get("MLFLOW_TRACKING_URI", "http://localhost:5000"))
     mlflow.set_experiment("wine-quality")
 
     with mlflow.start_run() as run:

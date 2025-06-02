@@ -6,7 +6,7 @@ from mlflow.client import MlflowClient
 @click.option("--alias", "--a", default="staging", help="Alias to assign to the model version.")
 @click.option("--version", "-v", default=None, help="Model version to promote. If not provided, the latest version will be used.")
 def main(alias, version):
-    client = MlflowClient(os.environ.get("MLFLOW_URI", "http://localhost:5000"))
+    client = MlflowClient(os.environ.get("MLFLOW_TRACKING_URI", "http://localhost:5000"))
     model_name = "wine-quality-model"   
 
     if version:

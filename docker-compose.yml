@@ -62,7 +62,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_PORT=${POSTGRES_PORT}
-      - MLFLOW_URI=http://mlflow:${MLFLOW_PORT}
+      - MLFLOW_TRACKING_URI=http://mlflow:${MLFLOW_PORT}
     volumes:
       - mlruns:/app/mlruns
     depends_on:
@@ -76,7 +76,7 @@ services:
       context: .
       dockerfile: ci/promotion/Dockerfile
     environment:
-      - MLFLOW_URI=http://mlflow:${MLFLOW_PORT}
+      - MLFLOW_TRACKING_URI=http://mlflow:${MLFLOW_PORT}
     volumes:
       - mlruns:/app/mlruns
     restart: "no"
@@ -91,7 +91,7 @@ services:
     env_file:
       - .env
     environment:
-      - MLFLOW_URI=http://mlflow:${MLFLOW_PORT}
+      - MLFLOW_TRACKING_URI=http://mlflow:${MLFLOW_PORT}
     volumes: # TODO remove after local dev
       - ./api:/app/api
       - ./shared:/app/shared
