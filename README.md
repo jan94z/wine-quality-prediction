@@ -1,85 +1,68 @@
-# WORK IN PROGRESS
-This is a practice project of mine to cover basic ML deployment workflows including model serving, SQL integration, API design, API security / auth, container-based deployment, MLops basics (Mlflow, CI/CD) and unit/integration tests. Besides the coding part, I am also trying to work as agile as possible in an one-person project without real world users/customers - check out the kanban board [here](https://github.com/users/jan94z/projects/3)
+# Wine Quality Prediction - ML Deployment Practice Project
+Status: *Work in Progress* 
 
+This project is a hands-on exercise in end-to-end machine learning deployment, focusing on real-world MLOps patterns:
+* Model serving (FastAPI)
+* SQL integration (PostgreSQL)
+* API design & security (JWT)
+* Containerization (Docker)
+* Experiment tracking & model registry (MLflow)
+* CI/CD & Testing (GitHub Actions, unit/integration tests)
+* Agile development (solo Kanban: [Project Board](https://github.com/users/jan94z/projects/3))
 
-# Wine Quality Prediction
-This project provides a machine learning API to predict wine quality based on physicochemical properties[^1]. It uses a classification model to predict the wine's quality score and exposes the prediction functionality through a FastAPI web service. 
-The project includes:
-* A PostgreSQL database to store wine samples and user login data
-* A machine learning model trained on the Wine quality dataset
-* Mlflow to track experiments and for model versionin 
-* A FastAPI backend to provide prediction and secure data access endpoints
-* Docker support to containerize and run the service easily
-* CI/CD workflows to automatically run tests when pull requests are made or something is pushed to main
-* ...\
+## Project Overview
+This repository provides an end-to-end solution for predicting wine quality based on physicochemical properties[^1], built for practical MLOps learning and demonstration:
+* Database: PostgreSQL for data and user management
+* Model Training: Classification model trained on the Wine Quality dataset
+* Experiment Tracking & Model Management: MLflow for logging runs and managing production models
+* API: FastAPI web service for secure model inference and data access
+* Security: JWT-based authentication and protected endpoints
+* Deployment: Docker Compose for local orchestration; ready for Kubernetes/cloud migration
+* CI/CD: Automated builds, tests, and Docker image pushes via GitHub Actions
 
-## Installation guide
+## Quick Start
+### Requirements
+* [Docker](https://docs.docker.com/get-docker/)
+* Basic familiarity with command line
+
+### Running the Full Stack with Docker Compose
+This will start all core services, train a default Random Forest model, and promote it to the "Production" stage so the API can use it automatically for predictions. If you want to train a different model or change hyperparameters, update ```train.py``` before running the training step. Model promotion is handled locally for now—see Step 4 for how to promote a new model version to "Production." You can retrain and promote as often as you like to experiment with different models.
 ```bash
-sudo docker compose up --build -d db db-init
+# Step 1: Start database and initialize data
+docker compose -f docker-compose.yml up --build -d db
+docker compose -f docker-compose.yml build db-init
+
+# Step 2: Start MLflow tracking server
 sudo docker compose up --build -d mlflow
-sudo docker compose up --build -d training
-sudo docker compose up --build -d promotion
-sudo docker compose run --rm promotion --alias production
 
+# Step 3: Train and register a model
+docker compose -f docker-compose.yml build training
+docker compose -f docker-compose.yml run --rm training
 
-sudo docker compose run --rm training --name yourModel
+# Step 4: (Optional) Promote a model to "production"
+docker compose -f docker-compose.yml build promotion
+docker compose -f docker-compose.yml run --rm promotion --alias Production
+
+# Step 5: Start the API
+docker compose -f docker-compose.yml up --build -d api
 ```
+* API docs: http://localhost:8000/docs
+* MLflow UI: http://localhost:5000/
 
+### API Endpoints
+All endpoints (except /health and /token) require a valid authentication token. Use the /token endpoint to obtain a JWT after registering or logging in.
+* ```GET /health``` Simple health check; returns API status.
+* ```POST /token```Obtain an access token (JWT) by providing a valid username and password. Request body: username, password (form data).
+* ```POST /register``` Register a new user with email and password. Request body: JSON with email and password.
+* ```GET /samples``` Return a random sample of wine dataset rows from the database. Requires authentication.
+* ```POST /predict```
+Predict wine quality for the provided sample (input as JSON with all features). Uses the current production model loaded from MLflow. Requires authentication. Request body: wine sample features (JSON).
 
-
-### User
-Download this repo and execute ...
-```bash
-sudo docker compose up --build -d db db-init
-sudo docker compose up --build -d mlflow
-sudo docker compose up --build -d training
-sudo docker compose run --rm training --name yourModel
-```
-
-
-http://localhost:5000/
-
-Then you can open http://localhost:8000/docs in your browser. 
-
-API calls:
-* /health: Checks API health
-* /samples: Randomly lists 5 samples of the wine quality dataset from the deployed DB
-* /models: Prints the DB model registry.
-*  /pred: Predicts the wine quality of a given sample as json input. The model path needs to be entered, too.
-
-
-### Dev
-```bash
-sudo apt-get update
-sudo apt-get -y upgrade
-sudo apt-get install -y python3-pip
-sudo apt-get install build-essential libssl-dev libffi-dev python-dev
-sudo apt-get install -y python3-venv
-```
-```bash
-python3 -m venv ".venv"
-source .venv/bin/activate
-pip install --upgrade pip
-```
-```basb
-pip install requirements.txt
-```
-```basb
-sudo docker compose -f docker/docker-compose.yml up --build db
-```
-```bash
-python -m docker.init.init_db.py
-```
-```bash
-python -m training.train_model -n "model_name" -v
-```
-```bash
-uvicorn app.main:app --reload
-```
-
-```bash
-PYTHONPATH=. pytest -v
-```
+## Project Status & Next Steps
+* ✔️ Local development & Docker Compose orchestration complete
+* ✔️ Model registry and promotion via MLflow
+* ✔️ API with authentication and CI/CD
+* 🚧 Local Kubernetes and Azure cloud deployment in progress (see azure-deploy branch soon)
 
 [^1]:P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis. 
 Modeling wine preferences by data mining from physicochemical properties.
