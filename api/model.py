@@ -17,7 +17,6 @@ class Model:
                 tracking_uri = os.environ.get("MLFLOW_TRACKING_URI", "http://mlflow:5000")
                 mlflow.set_tracking_uri(tracking_uri)
                 model_uri = f"models:/{self.model_name}@Production"
-                print(f"Loading model from {model_uri}")
                 self.model = mlflow.pyfunc.load_model(model_uri)
 
     def predict(self, data):

@@ -5,6 +5,9 @@ from pathlib import Path
 from sqlalchemy import text
 from sqlalchemy.exc import OperationalError
 from shared.utils import get_engine, query, hash_password
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def data_exploration(df:pd.DataFrame, title:str) -> None:
     """
@@ -13,16 +16,23 @@ def data_exploration(df:pd.DataFrame, title:str) -> None:
         df (pd.DataFrame): The DataFrame to explore.
         title (str): Title for the exploration output.
     """ 
-    print("-----------------------------------")
-    print(f'{title} - Head:\n', df.head())
-    print("-----------------------------------")
-    print('Columns:', len(df.columns))
-    print('Rows:', len(df))
-    print("-----------------------------------")
-    print('Summary:\n', df.describe().round(2))
-    print("-----------------------------------")
-    print("Missing Values:\n", df.isnull().sum())
-    print("-----------------------------------")
+    # print("-----------------------------------")
+    # print(f'{title} - Head:\n', df.head())
+    # print("-----------------------------------")
+    # print('Columns:', len(df.columns))
+    # print('Rows:', len(df))
+    # print("-----------------------------------")
+    # print('Summary:\n', df.describe().round(2))
+    # print("-----------------------------------")
+    # print("Missing Values:\n", df.isnull().sum())
+    # print("-----------------------------------")
+
+    logger.info(f"{{title}} - Head:\n{df.head()}")
+    logger.info(f"Columns: {len(df.columns)}")
+    logger.info(f"Rows: {len(df)}")
+    logger.info(f"Summary:\n{df.describe().round(2)}")
+    logger.info(f"Missing Values:\n{df.isnull().sum()}")
+
 
 def wait_for_db(engine) -> None:
     """ 
@@ -34,10 +44,12 @@ def wait_for_db(engine) -> None:
         try:
             with engine.connect() as conn:
                 conn.execute(text("SELECT 1"))
-                print("DB is ready.")
+                # print("DB is ready.")
+                logger.info("DB is ready.")
                 return
         except OperationalError:
-            print("Waiting for DB...")
+            # print("Waiting for DB...")
+            logger.warning("DB not ready, retrying...")
             time.sleep(5)
     raise Exception("DB not ready after retries.")
 
@@ -89,9 +101,11 @@ def main() -> None:
                 wine_type TEXT
             )
         """])
-    print("wine_samples table ensured.")
+    # print("wine_samples table ensured.")
+    logger.info("wine_samples table ensured.")
     combined_df.to_sql('wine_samples', engine, if_exists="append", index=False)
-    print(f"Finished import")
+    # print(f"Finished import")
+    logger.info(f"Finished import of {len(combined_df)} samples into wine_samples table.")
 
     # Create train/valid/test split
     query(engine, 
@@ -115,7 +129,8 @@ def main() -> None:
           ]
           )
 
-    print("Created train/valid/test split.")
+    # print("Created train/valid/test split.")
+    logger.info("Created train/valid/test split.")
 
     # Create users table and insert test user
     query(engine,
@@ -133,7 +148,8 @@ def main() -> None:
                 """ # insert a test user into the table
             ]
             )
-    print("Created users table and test user.")
+    # print("Created users table and test user.")
+    logger.info("Created users table and test user.")
         
 if __name__ == "__main__":
     main()

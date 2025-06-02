@@ -1,6 +1,10 @@
 import os
 import click
 from mlflow.client import MlflowClient
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 @click.command()
 @click.option("--alias", "--a", default="staging", help="Alias to assign to the model version.")
@@ -22,7 +26,8 @@ def main(alias, version):
     else:
         raise ValueError("Alias must be either 'Staging', 'Production', or 'Archived'.")
         
-    print(f"Model version {version} promoted to {alias}.")
+    logger.info(f"Model version {version} promoted to {alias}.")
+
 
 if __name__ == "__main__":
     main()

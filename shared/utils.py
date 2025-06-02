@@ -15,7 +15,6 @@ def get_engine():
     db_name = os.environ.get("POSTGRES_DB", "db")
 
     url = f"postgresql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
-    print(url)
     return create_engine(url)
 
 def query(engine, queries:list[str], commit:bool=True) -> None:
