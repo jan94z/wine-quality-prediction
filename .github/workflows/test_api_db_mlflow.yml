@@ -25,7 +25,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt-get update && sudo pip install --upgrade pip
           pip install -r api/requirements.txt
           pip install -r shared/requirements.txt
           pip install -r db/requirements.txt
