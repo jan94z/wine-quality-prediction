@@ -20,9 +20,6 @@ from api.main import app
 import pytest
 from sqlalchemy import text
 from shared.utils import get_engine, query
-import numpy as np
-import mlflow
-import pandas as pd
 
 ### BASIC TESTS ###
 # API #
