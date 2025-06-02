@@ -1,11 +1,23 @@
+import os
+# SET TEST ENVIRONMENT VARIABLES
+os.environ["POSTGRES_USER"] = "postgres"
+os.environ["POSTGRES_PASSWORD"] = "postgres"
+os.environ["POSTGRES_HOST"] = "localhost"
+os.environ["POSTGRES_PORT"] = "5433" 
+os.environ["POSTGRES_DB"] = "db"
+os.environ["MLFLOW_URI"] = "http://localhost:5000"
+os.environ["CRYPT_CONTEXT"] = "bcrypt"
+os.environ["TEST_USER"] = "test_user@test.com"
+os.environ["TEST_PASSWORD"] = "test_password"
+os.environ["JWT_SECRET_KEY"] = "test_key"
+os.environ["JWT_ALGORITHM"] = "HS256"
+os.environ["ACCESS_TOKEN_EXPIRE_MINUTES"] = "30"
+
 from fastapi.testclient import TestClient
-from app.main import app
+from api.main import app
 import pytest
 from sqlalchemy import text
-import os
 from shared.utils import get_engine, query
-from mlflow.tracking import MlflowClient
-import mlflow
 import numpy as np
 
 ### BASIC TESTS ###
@@ -18,8 +30,12 @@ def test_health_endpoint():
     assert response.json() == {"status": "ok"}
 
 def test_predict_endpoint():
+    login_response = client.post("/token", data = {"username": os.environ["TEST_USER"], "password": os.environ["TEST_PASSWORD"]})
+    assert login_response.status_code == 200
+    token = login_response.json()["access_token"]
+
+    headers = {"Authorization": f"Bearer {token}"}
     payload = {
-        "sample": {
             "fixed_acidity": 7.0,
             "volatile_acidity": 0.27,
             "citric_acid": 0.36,
@@ -32,9 +48,9 @@ def test_predict_endpoint():
             "sulphates": 0.45,
             "alcohol": 8.8
         }
-    }
 
-    response = client.post("/predict", json=payload)
+
+    response = client.post("/predict", json=payload, headers=headers)
     assert response.status_code == 200
     # TODO CHECK MODEL FUNCTIONALITY, EASIER HERE BECAUSE I LOAD A MODEL ANYWAY
     prediction = response.json()['quality_prediction']
@@ -86,18 +102,3 @@ def test_user_insert(test_db):
         row = result.fetchone()
         assert row is not None
         assert row.username == 'test'
-
-# model
-# def test_model_prediction():
-#     mlfClient = MlflowClient()
-#     model_name = "wine-quality-model"
-#     staging_version = None
-#     for v in client.search_model_versions(f"name='{model_name}'"):
-#         if "staging" in (v.aliases or []):
-#             staging_version = v.version
-#             break
-#         if not staging_version:
-#             raise Exception("No model in staging.")
-#     model_uri = f"models:/{model_name}@staging"
-#     model = mlflow.pyfunc.load_model(model_uri=model_uri)
-#     # not finished, bc we test the model's functionality already in the prediction endpoint

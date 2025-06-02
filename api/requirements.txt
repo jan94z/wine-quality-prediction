@@ -13,3 +13,4 @@ mlflow
 pydantic[email]
 python-multipart
 uvicorn
+httpx

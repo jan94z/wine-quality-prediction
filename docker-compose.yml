@@ -84,7 +84,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: ./api/Dockerfile
+      dockerfile: api/Dockerfile
     restart: always
     ports:
       - ${API_LOCAL_PORT}:${API_PORT}

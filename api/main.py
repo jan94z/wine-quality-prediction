@@ -1,3 +1,4 @@
+# main.py
 from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from api.model import Model
@@ -8,6 +9,7 @@ from slowapi.util import get_remote_address
 from api.auth import verify_password, create_access_token, get_current_user
 
 app = FastAPI()
+model = Model(model_name="wine-quality-model")  # Load once on app startup
 
 # Middleware and rate limiting
 limiter = Limiter(key_func=get_remote_address)
@@ -49,12 +51,14 @@ def predict(
     sample: WineSample,
     current_user: str = Depends(get_current_user)
 ):
-    # Prepare sample data as dict
+    print("Received prediction request")
     sample_data = sample.dict()
     model = Model(model_name="wine-quality-model")
     try:
         prediction = model.predict(sample_data)
+        print("Prediction complete:", prediction)
     except Exception as e:
+        print("Prediction failed:", str(e))
         raise HTTPException(status_code=500, detail=f"Model prediction failed: {str(e)}")
     return PredictionResponse(quality_prediction=prediction)
 

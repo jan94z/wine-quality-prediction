@@ -25,18 +25,23 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r api/requirements.txt
           pip install -r shared/requirements.txt
-          pip install -r db/requirements.txt
-          pip install -r training/requirements.txt
-          pip install pytest
+          pip install -r ci/tests/requirements.txt
 
       - name: Set up Docker Compose
         run: sudo apt-get update && sudo apt-get install -y docker-compose
 
       - name: Start Docker Compose services
         run: | 
-            docker compose -f ci/docker-compose.yml up --build -d db db-init mlflow promotion api
+            cd ci
+            docker compose up --build -d db
+            docker compose up --build -d db-init
+            docker compose up --build -d mlflow
+            docker compose up --build -d training
+            docker compose up --build -d promotion
+            docker compose run --rm promotion --alias Production
+            docker compose up --build -d api
+            cd ..
 
       - name: Wait for API to be ready
         run: |
@@ -47,8 +52,8 @@ jobs:
           done
 
       - name: Run tests
-        run: pytest ci/tests/tests.py
-        
+        run: PYTHONPATH=$(pwd) pytest ci/tests/tests.py
+
       - name: Shutdown services
         run: docker compose -f ci/docker-compose.yml down
 
