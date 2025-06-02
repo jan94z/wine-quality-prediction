@@ -29,7 +29,6 @@ jobs:
           pip install -r db/requirements.txt
           pip install -r api/requirements.txt
           pip install -r training/requirements.txt
-          pip install -r ci/promotion/requirements.txt
           pip install pytest
 
       - name: Set up Docker Compose

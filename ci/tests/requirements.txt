@@ -1,7 +1,0 @@
-fastapi
-pytest
-SQLAlchemy
-numpy
-httpx
-pandas
-pydantic[email]
