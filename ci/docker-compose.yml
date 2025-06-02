@@ -15,7 +15,7 @@ services:
     
   db-init:
     build:
-      context: .
+      context: ..
       dockerfile: db/Dockerfile
     environment:
       POSTGRES_USER: "postgres"
@@ -32,7 +32,7 @@ services:
 
   mlflow:
     build:
-      context: .
+      context: ..
       dockerfile: mlflow/Dockerfile
     image: ghcr.io/mlflow/mlflow
     environment:
@@ -54,7 +54,7 @@ services:
 
   training:
     build:
-      context: .
+      context: ..
       dockerfile: training/Dockerfile
     environment:
       POSTGRES_USER: postgres
@@ -73,7 +73,7 @@ services:
 
   promotion:
     build:
-      context: .
+      context: ..
       dockerfile: ci/promotion/Dockerfile
     environment:
       MLFLOW_URI: http://mlflow:5000
