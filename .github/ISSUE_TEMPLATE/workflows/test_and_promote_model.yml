@@ -1,0 +1,24 @@
+# This does not work because nothing is hosted in a cloud so far
+# This is a potential cloud ci pipeline to test the model and promote it to staging if it passed all test
+# TODO: Finish if we are deploying to a cloud service
+
+# name: Model Test & Staging Promotion
+
+# on: [workflow_dispatch, push]
+
+# jobs:
+#   test_and_stage:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#       - name: Set up Python
+#         uses: actions/setup-python@v4
+#         with:
+#           python-version: '3.11'
+#       - name: Install dependencies
+#         run: |
+#           pip install -r requirements.txt
+#       - name: Run model performance tests
+#         run: python ci/tests/pre_promotion_tests.py
+#       - name: Promote model to staging
+#         run: python ci/promotion/promote_to_staging.py
