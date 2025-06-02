@@ -1,0 +1,55 @@
+# This just tests if the db, the mlflow server, the api is working IN THEORY
+# bc everything just runs locally, github actions can't access the existing containers, it just creates its own
+# including model training just works because the model and the data is so small 
+
+name: Test API with PostgreSQL and Docker Compose
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo pip install --upgrade pip
+          pip install -r api/requirements.txt
+          pip install -r shared/requirements.txt
+          pip install -r db/requirements.txt
+          pip install -r training/requirements.txt
+          pip install pytest
+
+      - name: Set up Docker Compose
+        run: sudo apt-get update && sudo apt-get install -y docker-compose
+
+      - name: Start Docker Compose services
+        run: | 
+            docker compose -f ci/docker-compose.yml up --build -d db db-init mlflow promotion api
+
+      - name: Wait for API to be ready
+        run: |
+          for i in {1..10}; do
+            curl -s http://localhost:8000/docs && break
+            echo "Waiting for API..."
+            sleep 3
+          done
+
+      - name: Run tests
+        run: pytest ci/tests/tests.py
+        
+      - name: Shutdown services
+        run: docker compose -f ci/docker-compose.yml down
+
