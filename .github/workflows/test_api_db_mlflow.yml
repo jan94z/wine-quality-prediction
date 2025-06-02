@@ -57,6 +57,3 @@ jobs:
       - name: Run tests
         run: PYTHONPATH=$(pwd) pytest ci/tests/tests.py
 
-      - name: Shutdown services
-        run: docker compose down
-

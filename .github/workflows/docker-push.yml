@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  IMAGE_NAME: jan94z/wine-quality-prediction  # Change to your DockerHub username/repo
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/wine-quality-prediction  # Change to your DockerHub username/repo
 
 jobs:
   build-and-push:
