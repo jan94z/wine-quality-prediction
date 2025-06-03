@@ -1,0 +1,15 @@
+# k8s/db-init-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-init
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: db-init
+        image: jan94z/wine-quality-prediction-db-init:latest
+        envFrom:
+          - secretRef:
+              name: winequality-secret

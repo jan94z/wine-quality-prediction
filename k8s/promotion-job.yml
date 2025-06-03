@@ -1,0 +1,15 @@
+# k8s/promotion-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: promotion
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: promotion
+        image: jan94z/wine-quality-prediction-promotion:latest
+        envFrom:
+          - secretRef:
+              name: winequality-secret

@@ -1,0 +1,48 @@
+# k8s/mlflow.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mlflow
+  template:
+    metadata:
+      labels:
+        app: mlflow
+    spec:
+      containers:
+      - name: mlflow
+        image: jan94z/wine-quality-prediction-mlflow:latest
+        args: [
+          "mlflow", "server",
+          "--backend-store-uri", "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)",
+          "--default-artifact-root", "/mlflow",
+          "--host", "0.0.0.0",
+          "--port", "5000"
+        ]
+        envFrom:
+          - secretRef:
+              name: winequality-secret
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+        - name: mlflow-artifacts
+          mountPath: /mlflow
+      volumes:
+      - name: mlflow-artifacts
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mlflow
+spec:
+  selector:
+    app: mlflow
+  ports:
+  - port: 5000
+    targetPort: 5000
+  type: ClusterIP

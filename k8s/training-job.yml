@@ -1,0 +1,15 @@
+# k8s/training-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: training
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: training
+        image: jan94z/wine-quality-prediction-training:latest
+        envFrom:
+          - secretRef:
+              name: winequality-secret

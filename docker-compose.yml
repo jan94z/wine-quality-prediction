@@ -90,8 +90,6 @@ services:
       - ${API_LOCAL_PORT}:${API_PORT}
     env_file:
       - .env
-    environment:
-      - MLFLOW_TRACKING_URI=http://mlflow:${MLFLOW_PORT}
     volumes: # TODO remove after local dev
       - ./api:/app/api
       - ./shared:/app/shared

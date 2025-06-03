@@ -70,3 +70,18 @@ In Decision Support Systems, Elsevier, 47(4):547-553. ISSN: 0167-9236.\
 Available at: http://dx.doi.org/10.1016/j.dss.2009.05.016 \
 Data available at: https://archive.ics.uci.edu/dataset/186/wine+quality
 
+## CODE DUMP FOR LATER
+```bash
+kind create cluster --name wine-quality --config kind-cluster.yml
+kubectl create secret generic winequality-secret --from-env-file=.env
+kubectl apply -f k8s/db.yml
+kubectl apply -f k8s/db-init-job.yml
+kubectl apply -f k8s/mlflow.yml
+kubectl port-forward service/mlflow 5000:5000
+kubectl apply -f k8s/training-job.yml
+kubectl apply -f k8s/promotion-job.yml
+kubectl apply -f k8s/api.yml
+
+kubectl port-forward service/wine-quality-prediction-api 8000:8000
+
+```

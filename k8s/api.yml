@@ -1,0 +1,36 @@
+# k8s/api.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wine-quality-prediction-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wine-quality-prediction-api
+  template:
+    metadata:
+      labels:
+        app: wine-quality-prediction-api
+    spec:
+      containers:
+      - name: wine-quality-api
+        image: jan94z/wine-quality-prediction-api:latest
+        envFrom:
+          - secretRef:
+              name: winequality-secret
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wine-quality-prediction-api
+spec:
+  selector:
+    app: wine-quality-prediction-api
+  ports:
+  - port: 8000
+    targetPort: 8000
+    nodePort: 30080
+  type: NodePort

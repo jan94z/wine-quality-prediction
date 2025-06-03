@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - local-k8s
 
 env:
   IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/wine-quality-prediction
@@ -43,6 +44,8 @@ jobs:
           push: true
           tags: ${{ env.IMAGE_NAME }}-training:latest
 
+      # DB
+      
       # DB-Init (optional)
       - name: Build and push DB-Init image
         uses: docker/build-push-action@v5
