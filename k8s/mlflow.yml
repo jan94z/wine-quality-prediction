@@ -33,7 +33,8 @@ spec:
           mountPath: /mlflow
       volumes:
       - name: mlflow-artifacts
-        emptyDir: {}
+        persistentVolumeClaim:
+          claimName: mlflow-artifacts-pvc
 ---
 apiVersion: v1
 kind: Service

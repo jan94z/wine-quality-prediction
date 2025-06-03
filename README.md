@@ -76,6 +76,7 @@ kind create cluster --name wine-quality --config kind-cluster.yml
 kubectl create secret generic winequality-secret --from-env-file=.env
 kubectl apply -f k8s/db.yml
 kubectl apply -f k8s/db-init-job.yml
+kubectl apply -f k8s/artifacts.yml
 kubectl apply -f k8s/mlflow.yml
 kubectl port-forward service/mlflow 5000:5000
 kubectl apply -f k8s/training-job.yml

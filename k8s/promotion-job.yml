@@ -13,3 +13,4 @@ spec:
         envFrom:
           - secretRef:
               name: winequality-secret
+        args: ["--alias", "Production"]
